@@ -1,3 +1,4 @@
+import 'package:alpha_taxi/animations/fade-animations.dart';
 import 'package:alpha_taxi/bloc/default.dart';
 import 'package:alpha_taxi/screens/auth/index.dart';
 import 'package:alpha_taxi/screens/home/index.dart';
@@ -22,16 +23,32 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: Center(
-          child: Text(
-            "ALPHA\nTAXI",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 42.0,
-              fontFamily: 'OpenSans',
-              color: Colors.white,
-              fontWeight: FontWeight.w700,
+        child: Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(bottom: 100),
+              child: Text(
+                "ALPHA\nTAXI",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 42.0,
+                  fontFamily: 'OpenSans',
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
-          )),
+            FadeAnimation(
+              2,
+              Container(
+                margin: EdgeInsets.only(top: 100),
+                  child:
+              new Image.asset("assets/splash_image.png")),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -46,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
     //Splash screen delay before passing moving to next screen
-    Future.delayed(Duration(seconds: 8), () {
+    Future.delayed(Duration(seconds: 5), () {
       checkLoginState();
     });
   }

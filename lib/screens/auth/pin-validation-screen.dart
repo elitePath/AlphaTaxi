@@ -1,10 +1,10 @@
 import 'package:alpha_taxi/animations/route_animations/slide_from_left_page_route.dart';
 import 'package:alpha_taxi/components/custom-circular-button-main.dart';
+import 'package:alpha_taxi/screens/add-card-screen.dart';
 import 'package:alpha_taxi/screens/auth/index.dart';
 import 'package:alpha_taxi/screens/home/index.dart';
 import 'package:alpha_taxi/theme/style.dart';
 import 'package:alpha_taxi/utils/color.dart';
-import 'package:alpha_taxi/utils/network-utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
@@ -115,7 +115,9 @@ class _PinValidationScreenState extends State<PinValidationScreen> {
               ),
               CustomCircularButtonMain(
                 onPressed: (){
-
+                  Navigator.pushReplacement(
+                      context, SlideFromLeftPageRoute(widget:
+                  AddCardScreen()));
                 },
                 backgroundColor: primaryColor,
                 textColor: Colors.white,

@@ -5,7 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 class NetworkUtils{
   static showRedToast(String message) {
-    Fluttertoast.showToast(
+   FlutterToast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.TOP,
@@ -15,7 +15,7 @@ class NetworkUtils{
         fontSize: 16.0);
   }
   static showToast(String message) {
-    Fluttertoast.showToast(
+    FlutterToast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.TOP,
@@ -25,7 +25,7 @@ class NetworkUtils{
         fontSize: 16.0);
   }
   static showToastCenter(String message) {
-    Fluttertoast.showToast(
+    FlutterToast.showToast(
         msg: message,
         toastLength: Toast.LENGTH_LONG,
         gravity: ToastGravity.BOTTOM,
