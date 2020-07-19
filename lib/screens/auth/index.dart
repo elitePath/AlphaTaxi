@@ -2,9 +2,11 @@ import 'package:alpha_taxi/animations/fade-animations.dart';
 import 'package:alpha_taxi/animations/route_animations/slide_from_left_page_route.dart';
 import 'package:alpha_taxi/components/custom-circular-button-main.dart';
 import 'package:alpha_taxi/screens/auth/pin-validation-screen.dart';
+import 'package:alpha_taxi/services/auth-service.dart';
 import 'package:alpha_taxi/theme/style.dart';
 import 'package:alpha_taxi/utils/color.dart';
 import 'package:alpha_taxi/utils/network-utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -135,6 +137,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   PinValidationScreen(phoneNumber: "+234"+textEditingController.text,)));
                 }
               },
+              isLoading: false,
               fontWeight: FontWeight.w700,
               textColor: Colors.white,
               backgroundColor: primaryColor,
@@ -148,4 +151,6 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
+
+
 }

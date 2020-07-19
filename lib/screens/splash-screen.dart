@@ -1,8 +1,11 @@
 import 'package:alpha_taxi/animations/fade-animations.dart';
+import 'package:alpha_taxi/animations/route_animations/slide_from_left_page_route.dart';
 import 'package:alpha_taxi/bloc/default.dart';
 import 'package:alpha_taxi/screens/auth/index.dart';
 import 'package:alpha_taxi/screens/home/index.dart';
+import 'package:alpha_taxi/services/auth-service.dart';
 import 'package:alpha_taxi/utils/pref-manager.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -74,18 +77,12 @@ class _SplashScreenState extends State<SplashScreen>
       print("authToken " + data.toString());
       if(data!=null){
         Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => HomeScreen()
-          ),
-        );
+            context, SlideFromLeftPageRoute(widget:
+        HomeScreen()));
       } else{
         Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AuthScreen()
-          ),
-        );
+            context, SlideFromLeftPageRoute(widget:
+       AuthScreen()));
       }
 
     },onError: (e) {

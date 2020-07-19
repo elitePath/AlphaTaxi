@@ -37,7 +37,9 @@ dependencies:
   fluttertoast: ^5.0.1
   pinput: ^0.2.0
   mdi: ^3.0.0
-
+  google_maps_flutter: ^0.5.28+1
+  flutter_statusbarcolor: ^0.2.3
+  firebase_auth: ^0.16.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -76,3 +78,11 @@ flutter:
         - asset: fonts/circular-std/CircularStd-Book.ttf
           weight: 200
 
+    - family: Montserrat
+      fonts:
+        - asset: fonts/montserrat/Montserrat_Bold.otf
+          weight: 700
+        - asset: fonts/montserrat/Montserrat_Medium.otf
+          weight: 300
+        - asset: fonts/montserrat/Montserrat_Regular.otf
+          weight: 200

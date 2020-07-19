@@ -5,10 +5,12 @@ class CustomCircularButtonMain extends StatefulWidget {
   final Function onPressed;
   Color backgroundColor;
   String text;
+  bool isLoading= false;
   FontWeight fontWeight;
   Color textColor;
   CustomCircularButtonMain({
     this.text,
+    this.isLoading,
     this.fontWeight,
     this.textColor,
     this.backgroundColor,
@@ -31,7 +33,7 @@ class _CustomCircularButtonMainState extends State<CustomCircularButtonMain> {
         padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 20),
         margin: EdgeInsets.only(left: 30, right: 30),
         child: Center(
-          child: Text(
+          child: !widget.isLoading?Text(
             widget.text,
             style: TextStyle(
               fontWeight: widget.fontWeight,
@@ -39,6 +41,13 @@ class _CustomCircularButtonMainState extends State<CustomCircularButtonMain> {
               color: widget.textColor,
               fontSize: 16,
             ),
+          ):SizedBox(
+            child: CircularProgressIndicator(
+              backgroundColor:
+              Colors.white,
+            ),
+            height: 15.0,
+            width: 15.0,
           ),
         ),
       ),

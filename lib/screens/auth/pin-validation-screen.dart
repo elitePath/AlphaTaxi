@@ -3,13 +3,16 @@ import 'package:alpha_taxi/components/custom-circular-button-main.dart';
 import 'package:alpha_taxi/screens/add-card-screen.dart';
 import 'package:alpha_taxi/screens/auth/index.dart';
 import 'package:alpha_taxi/screens/home/index.dart';
+import 'package:alpha_taxi/services/auth-service.dart';
 import 'package:alpha_taxi/theme/style.dart';
 import 'package:alpha_taxi/utils/color.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pinput/pin_put/pin_put.dart';
+
 class PinValidationScreen extends StatefulWidget {
- final String phoneNumber;
+  final String phoneNumber;
   PinValidationScreen({Key key, this.phoneNumber}) : super(key: key);
   @override
   _PinValidationScreenState createState() => _PinValidationScreenState();
@@ -18,6 +21,9 @@ class PinValidationScreen extends StatefulWidget {
 class _PinValidationScreenState extends State<PinValidationScreen> {
   final TextEditingController _pinPutController = TextEditingController();
   final FocusNode _pinPutFocusNode = FocusNode();
+  String  verificationId;
+  bool codeSent = false;
+  bool isLoading = false;
   BoxDecoration pinPutDecoration = BoxDecoration(
       border: Border.all(color: HexColor("#1FCD6C")),
       borderRadius: BorderRadius.circular(15));
@@ -25,7 +31,7 @@ class _PinValidationScreenState extends State<PinValidationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body:  Center(
+      body: Center(
         child: Padding(
           padding: const EdgeInsets.all(14.0),
           child: ListView(
@@ -36,19 +42,24 @@ class _PinValidationScreenState extends State<PinValidationScreen> {
                 child: RichText(
                   text: TextSpan(
                     children: <TextSpan>[
-                      TextSpan(text: 'Verification ', style: TextStyle(
-                        fontSize: 24.0,
-                        fontFamily: 'OpenSans',
-                        color: HexColor("#0D1724"),
-                        fontWeight: FontWeight.w300,
-                      ),),
-                      TextSpan(text: 'Code',
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            fontFamily: 'OpenSans',
-                            color: HexColor("#0D1724"),
-                            fontWeight: FontWeight.w700,
-                          ),),
+                      TextSpan(
+                        text: 'Verification ',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontFamily: 'OpenSans',
+                          color: HexColor("#0D1724"),
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Code',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontFamily: 'OpenSans',
+                          color: HexColor("#0D1724"),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -62,62 +73,67 @@ class _PinValidationScreenState extends State<PinValidationScreen> {
                   textAlign: TextAlign.center,
                   text: TextSpan(
                     children: <TextSpan>[
-                      TextSpan(text: 'Please type the verification code sent to ', style: TextStyle(
-                        fontSize: 16.0,
-                        fontFamily: 'OpenSans',
-                        color: HexColor("#0D1724"),
-                        fontWeight: FontWeight.w300,
-                      ),),
-                      TextSpan(text: ' ' + widget.phoneNumber,
+                      TextSpan(
+                        text: 'Please type the verification code sent to ',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontFamily: 'OpenSans',
+                          color: HexColor("#0D1724"),
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' ' + widget.phoneNumber,
                         style: TextStyle(
                           fontSize: 16.0,
                           fontFamily: 'OpenSans',
                           color: HexColor("#0D1724"),
                           fontWeight: FontWeight.w700,
-                        ),),
+                        ),
+                      ),
                     ],
                   ),
                 ),
               ),
-          SizedBox(
-            height: 40,
-          ),
-          PinPut(
-            textStyle: TextStyle(
-              fontWeight: FontWeight.w700,
-              fontFamily: "OpenSans",
-              color: HexColor("#0D1724"),
-              fontSize: 16,
-            ),
-            eachFieldMargin: EdgeInsets.all(12),
-            fieldsCount: 4,
-            fieldsAlignment:MainAxisAlignment.center,
-            eachFieldHeight: 45,
-            eachFieldWidth: 45,
-            onSubmit: (String pin) =>  Navigator.pushReplacement(
-                context, SlideFromLeftPageRoute(widget:
-           HomeScreen())),
-            focusNode: _pinPutFocusNode,
-            controller: _pinPutController,
-            submittedFieldDecoration:
-            pinPutDecoration.copyWith(borderRadius: BorderRadius.circular(20)),
-            pinAnimationType: PinAnimationType.slide,
-            selectedFieldDecoration: pinPutDecoration,
-            followingFieldDecoration: pinPutDecoration.copyWith(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: HexColor("#CFD1D3")
+              SizedBox(
+                height: 40,
               ),
-            ),
-          ),
+              PinPut(
+                textStyle: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "OpenSans",
+                  color: HexColor("#0D1724"),
+                  fontSize: 16,
+                ),
+                eachFieldMargin: EdgeInsets.all(12),
+                fieldsCount: 4,
+                fieldsAlignment: MainAxisAlignment.center,
+                eachFieldHeight: 45,
+                eachFieldWidth: 45,
+                onSubmit: (String pin) =>{
+                Navigator.pushReplacement(
+                context, SlideFromLeftPageRoute(widget: HomeScreen()))
+               //  verifyOTP(),
+                },
+                focusNode: _pinPutFocusNode,
+                controller: _pinPutController,
+                submittedFieldDecoration: pinPutDecoration.copyWith(
+                    borderRadius: BorderRadius.circular(20)),
+                pinAnimationType: PinAnimationType.slide,
+                selectedFieldDecoration: pinPutDecoration,
+                followingFieldDecoration: pinPutDecoration.copyWith(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: HexColor("#CFD1D3")),
+                ),
+              ),
               SizedBox(
                 height: 50,
               ),
               CustomCircularButtonMain(
-                onPressed: (){
+                isLoading: isLoading,
+                onPressed: () {
                   Navigator.pushReplacement(
-                      context, SlideFromLeftPageRoute(widget:
-                  AddCardScreen()));
+                      context, SlideFromLeftPageRoute(widget: AddCardScreen()));
                 },
                 backgroundColor: primaryColor,
                 textColor: Colors.white,
@@ -125,21 +141,56 @@ class _PinValidationScreenState extends State<PinValidationScreen> {
                 fontWeight: FontWeight.w700,
               ),
               CustomCircularButtonMain(
-                onPressed: (){
+                isLoading: false,
+                onPressed: () {
                   Navigator.pushReplacement(
-                      context, SlideFromLeftPageRoute(widget:
-                  AuthScreen()));
+                      context, SlideFromLeftPageRoute(widget: AuthScreen()));
                 },
                 textColor: primaryColor,
                 backgroundColor: Colors.white,
                 text: "Change Number",
                 fontWeight: FontWeight.w300,
               ),
-
-        ],
+            ],
           ),
         ),
       ),
     );
+  }
+
+  verifyOTP() {
+    codeSent ? AuthService().signInWithOTP(
+        _pinPutController.text,
+        verificationId):
+    verifyPhone(widget.phoneNumber);
+  }
+  Future<void> verifyPhone(phoneNo) async {
+    final PhoneVerificationCompleted verified = (AuthCredential authResult) {
+      AuthService().signIn(authResult);
+    };
+
+    final PhoneVerificationFailed verificationfailed =
+        (AuthException authException) {
+      print('${authException.message}');
+    };
+
+    final PhoneCodeSent smsSent = (String verId, [int forceResend]) {
+      this.verificationId = verId;
+      setState(() {
+        this.codeSent = true;
+      });
+    };
+
+    final PhoneCodeAutoRetrievalTimeout autoTimeout = (String verId) {
+      this.verificationId = verId;
+    };
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: phoneNo,
+        timeout: const Duration(seconds: 5),
+        verificationCompleted: verified,
+        verificationFailed: verificationfailed,
+        codeSent: smsSent,
+        codeAutoRetrievalTimeout: autoTimeout);
   }
 }
