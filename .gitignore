@@ -3,6 +3,7 @@
 *.log
 *.pyc
 *.swp
+*.json
 *google-services.json
 .DS_Store
 .atom/
