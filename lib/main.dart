@@ -1,4 +1,5 @@
 import 'package:alpha_taxi/routes.dart';
+import 'package:alpha_taxi/screens/home/index.dart';
 import 'package:alpha_taxi/screens/splash-screen.dart';
 import 'package:alpha_taxi/theme/style.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
           title: 'Alpha Taxi',
           theme: appTheme,
           debugShowCheckedModeBanner: false,
-          home: SplashScreen(),
+          home: HomeScreen(),
           routes: routes,
           navigatorObservers: [],
         ),

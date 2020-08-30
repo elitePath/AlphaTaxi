@@ -1,13 +1,15 @@
 import 'package:alpha_taxi/animations/fade-animations.dart';
 import 'package:alpha_taxi/animations/route_animations/slide_from_left_page_route.dart';
 import 'package:alpha_taxi/components/custom-circular-button-main.dart';
-import 'package:alpha_taxi/screens/auth/pin-validation-screen.dart';
-import 'package:alpha_taxi/services/auth-service.dart';
+import 'package:alpha_taxi/screens/home/index.dart';
 import 'package:alpha_taxi/theme/style.dart';
 import 'package:alpha_taxi/utils/color.dart';
 import 'package:alpha_taxi/utils/network-utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:pinput/pin_put/pin_put.dart';
+
+import '../add-card-screen.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -16,12 +18,149 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   TextEditingController textEditingController = new TextEditingController();
+  bool isCodeSent = false;
+  bool isLoading = false;
+  bool isLoadingWelcome = false;
+  final TextEditingController _pinPutController = TextEditingController();
+  final FocusNode _pinPutFocusNode = FocusNode();
+  BoxDecoration pinPutDecoration = BoxDecoration(
+      border: Border.all(color: HexColor("#1FCD6C")),
+      borderRadius: BorderRadius.circular(15));
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Column(
+    final _pinInputLayout =
+    Center(
+      child: FadeAnimation(
+        0.6,
+        Padding(
+          padding: const EdgeInsets.all(14.0),
+          child: ListView(
+            shrinkWrap: true,
+            children: <Widget>[
+              Align(
+                alignment: Alignment.center,
+                child: RichText(
+                  text: TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: 'Verification ',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontFamily: 'OpenSans',
+                          color: HexColor("#0D1724"),
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Code',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontFamily: 'OpenSans',
+                          color: HexColor("#0D1724"),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: 'Please type the verification code sent to ',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontFamily: 'OpenSans',
+                          color: HexColor("#0D1724"),
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      TextSpan(
+                        text: '+234${textEditingController.text}',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontFamily: 'OpenSans',
+                          color: HexColor("#0D1724"),
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 40,
+              ),
+              PinPut(
+                textStyle: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "OpenSans",
+                  color: HexColor("#0D1724"),
+                  fontSize: 16,
+                ),
+                eachFieldMargin: EdgeInsets.all(12),
+                fieldsCount: 4,
+                fieldsAlignment: MainAxisAlignment.center,
+                eachFieldHeight: 45,
+                eachFieldWidth: 45,
+                onSubmit: (String pin) =>{
+                  Navigator.pushReplacement(
+                      context, SlideFromLeftPageRoute(widget: HomeScreen()))
+                  //  verifyOTP(),
+                },
+                focusNode: _pinPutFocusNode,
+                controller: _pinPutController,
+                submittedFieldDecoration: pinPutDecoration.copyWith(
+                    borderRadius: BorderRadius.circular(20)),
+                pinAnimationType: PinAnimationType.slide,
+                selectedFieldDecoration: pinPutDecoration,
+                followingFieldDecoration: pinPutDecoration.copyWith(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: HexColor("#CFD1D3")),
+                ),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              CustomCircularButtonMain(
+                isLoading: isLoading,
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context, SlideFromLeftPageRoute(widget: AddCardScreen()));
+                },
+                backgroundColor: primaryColor,
+                textColor: Colors.white,
+                text: "Add Card",
+                fontWeight: FontWeight.w700,
+              ),
+              CustomCircularButtonMain(
+                isLoading: isLoadingWelcome,
+                onPressed: () {
+                setState(() {
+                  isCodeSent = false;
+                });
+                },
+                textColor: primaryColor,
+                backgroundColor: Colors.white,
+                text: "Change Number",
+                fontWeight: FontWeight.w300,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    final _phoneInputLayout = SingleChildScrollView(
+      child: FadeAnimation(
+        0.6,
+       Column(
           children: <Widget>[
             new Stack(children: <Widget>[
               Container(
@@ -132,12 +271,10 @@ class _AuthScreenState extends State<AuthScreen> {
                 if(textEditingController.text.length != 10){
                   NetworkUtils.showToast("Please input a valid phone number");
                 } else{
-                  Navigator.pushReplacement(
-                      context, SlideFromLeftPageRoute(widget:
-                  PinValidationScreen(phoneNumber: "+234"+textEditingController.text,)));
+                  _requestSMSCodeUsingPhoneNumber();
                 }
               },
-              isLoading: false,
+              isLoading: isLoadingWelcome,
               fontWeight: FontWeight.w700,
               textColor: Colors.white,
               backgroundColor: primaryColor,
@@ -150,7 +287,42 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       ),
     );
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: !isCodeSent ?
+      _phoneInputLayout: _pinInputLayout
+    );
+
   }
-
-
+// ------------ Function for Sending Token to Phone Number------------
+  void _requestSMSCodeUsingPhoneNumber() async{
+    setState(() {
+      isLoadingWelcome = true;
+    });
+    await FirebaseAuth.instance.verifyPhoneNumber(
+        phoneNumber: '+234${textEditingController.text}',
+        timeout: Duration(seconds:120),
+        verificationCompleted: (AuthCredential phoneAuthCredential) =>{
+          Navigator.pushReplacement(
+              context, SlideFromLeftPageRoute(widget: HomeScreen()))
+        },
+        verificationFailed: (AuthException error) => {
+        setState(() {
+        isCodeSent = false;
+        isLoadingWelcome = false;
+        }),
+          NetworkUtils.showToast("Verification failed. Please try again"),
+          print('error message is ${error.message}'
+          )
+        },
+        codeSent:(String verificationId, [int forceResendingToken]) {
+          setState(() {
+            isCodeSent = true;
+            isLoadingWelcome = false;
+          });
+          print('verificationId is $verificationId');
+          NetworkUtils.showToast("Code sent!");
+        },
+        codeAutoRetrievalTimeout: null);
+  }
 }

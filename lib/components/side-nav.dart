@@ -1,15 +1,17 @@
+import 'package:alpha_taxi/animations/route_animations/slide_from_left_page_route.dart';
 import 'package:alpha_taxi/components/side-list-tile.dart';
+import 'package:alpha_taxi/screens/auth/index.dart';
 import 'package:alpha_taxi/theme/style.dart';
 import 'package:alpha_taxi/utils/color.dart';
 import 'package:alpha_taxi/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:mdi/mdi.dart';
 
 class NavDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
+      padding: EdgeInsets.zero,
       children: <Widget>[
         Container(
           padding: const EdgeInsets.only(left: 40),
@@ -29,7 +31,7 @@ class NavDrawer extends StatelessWidget {
               Align(
                 alignment: Alignment.topLeft,
                 child: CircleAvatar(
-                  backgroundColor: primaryColor,
+                  backgroundColor: Colors.grey.withOpacity(0.40),
                   radius: 41,
                   child: ClipOval(
                       child: Image.network(
@@ -47,7 +49,7 @@ class NavDrawer extends StatelessWidget {
               Align(
                 alignment: Alignment.topLeft,
                 child: Text(
-                  "Laura Silver",
+                  "Welcome, Laura",
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 22.5,
@@ -124,7 +126,9 @@ class NavDrawer extends StatelessWidget {
                       ),
                     ),
                     onTap: () {
-
+                      Navigator.pushReplacement(
+                          context, SlideFromLeftPageRoute(widget:
+                      AuthScreen()));
 
                     }),
               ),

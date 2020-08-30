@@ -1,8 +1,10 @@
+import 'package:alpha_taxi/bloc/location/index.dart';
 import 'package:flutter/material.dart';
 
 
 class MainBloc with
-    ChangeNotifier{
+    ChangeNotifier,
+    LocationBloc{
   String _bearerToken;
 
   String get bearerToken {
